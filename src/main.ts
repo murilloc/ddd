@@ -8,8 +8,8 @@ const address = new Address('123 Main St', 1045, '22323-444', 'Rio de Janeiro');
 customer.address = address;
 customer.activate();
 
-const item1 = new OrderItem('1', 'Product 1', 100);
-const item2 = new OrderItem('2', 'Product 2', 200);
-const item3 = new OrderItem('3', 'Product 3', 300);
+const item1 = new OrderItem('1', 'c1', 50, 'p1', 10);
+const item2 = new OrderItem('2', 'c1', 200, 'p2', 5);
+const item3 = new OrderItem('3', 'c1', 50, 'p3', 8);
 
-const order = new Order(1, '123', [item1, item2, item3]);
+const order = new Order('1', '123', [item1, item2, item3]);
