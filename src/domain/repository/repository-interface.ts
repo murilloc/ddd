@@ -5,5 +5,5 @@ export default interface RepositoryInterface<T> {
 
   find(id: string): Promise<T>;
 
-  getAll(): Promise<T[]>;
+  findAll(): Promise<T[]>;
 }
