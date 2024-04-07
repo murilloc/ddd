@@ -4,7 +4,7 @@ import Customer from '../../domain/entity/customer';
 import CustomerRepository from './customer.repository';
 import Address from '../../domain/entity/address';
 
-describe('Customer repository test', () => {
+describe('Customer repository unit test', () => {
     let sequelize: Sequelize;
 
     beforeEach(async () => {
@@ -118,16 +118,19 @@ describe('Customer repository test', () => {
         const customer1 = new Customer('1', 'John Doe');
         const address1 = new Address('Main Street', 100, '12345', 'New York');
         customer1.changeAddress(address1);
+        customer1.addRewardPoints(100);
         customer1.activate();
 
         const customer2 = new Customer('2', 'Jane Doe');
         const address2 = new Address('Second Street', 200, '54321', 'Los Angeles');
+        customer2.addRewardPoints(200);
         customer2.changeAddress(address2);
         customer2.activate();
 
         const customer3 = new Customer('3', 'Jack Doe');
         const address3 = new Address('Third Street', 300, '54321', 'Los Angeles');
         customer3.changeAddress(address3);
+        customer3.addRewardPoints(300);
         customer3.deactivate();
 
         await customerRepository.create(customer1);
