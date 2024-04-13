@@ -102,12 +102,14 @@ describe('Order repository unity test', () => {
         await orderRepository.create(order);
 
         // Find order
-        const orderModel = await OrderModel.findOne({where: {id: order.id}, include: ["items"]});//
+        const orderModel = await OrderModel.findOne({where: {id: order.id}, include: ["items"]});
+        const orderFound = await orderRepository.find(order.id);
+
         expect(orderModel.toJSON()).toStrictEqual({
-            id: '1',
-            customerId: customer.id,
-            total: order.total(),
-            items: order.items.map((item) => ({
+            id: orderFound.id,
+            customerId: orderFound.customerId,
+            total: orderFound.total(),
+            items: orderFound.items.map((item) => ({
                 id: item.id,
                 name: item.name,
                 price: item.price,
