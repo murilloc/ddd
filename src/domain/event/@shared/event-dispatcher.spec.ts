@@ -1,6 +1,16 @@
 import EventDispatcher from "./event-dispatcher";
 import SendEmailWhenProductIsCreatedHandler from "../product/handler/send-email-when-product-is-created.handler";
 import ProductCreatedEvent from "../product/product-created.event";
+import Address from "../../entity/address";
+import Customer from "../../entity/customer";
+import SendConsoleLog1WhenCustomerIsCreatedHandler
+    from "../customer/handler/send-console-log-1-when-customer-is-created.handler";
+import SendConsoleLog2WhenCustomerIsCreatedHandler
+    from "../customer/handler/send-console-log-2-when-customer-is-created.handler";
+import CustomerCreatedEvent from "../customer/customer-created.event";
+import SendConsoleLogWhenCustomerAddressIsUpdatedHandler
+    from "../customer/handler/send-console-log-when-customer-address-is-updated.handler";
+import CustomerAddressUpdatedEvent from "../customer/customer-address-updated.event";
 
 describe('Domain events test', () => {
 
@@ -64,5 +74,72 @@ describe('Domain events test', () => {
         expect(spyEventHandler).toHaveBeenCalledTimes(1);
 
     });
+
+
+    it('should notify when a new customer is created', () => {
+        const eventDispatcher = new EventDispatcher();
+        const eventHandler1 = new SendConsoleLog1WhenCustomerIsCreatedHandler();
+        const eventHandler2 = new SendConsoleLog2WhenCustomerIsCreatedHandler();
+        const spyEventHandler1 = jest.spyOn(eventHandler1, 'handle')
+        const spyEventHandler2 = jest.spyOn(eventHandler2, 'handle')
+
+        const newCustomer = new Customer('1', 'Customer 1');
+        const address = new Address('Street 1', 1, '12345', 'City 1');
+        newCustomer.changeAddress(address);
+        const customerCreatedEvent = new CustomerCreatedEvent({
+            name: 'CustomerCreatedEvent',
+            data: newCustomer
+        })
+
+        eventDispatcher.register('CustomerCreatedEvent', eventHandler1);
+        eventDispatcher.register('CustomerCreatedEvent', eventHandler2);
+
+        expect(eventDispatcher.eventHandlers.CustomerCreatedEvent[0]).toMatchObject(eventHandler1);
+        expect(eventDispatcher.eventHandlers.CustomerCreatedEvent[1]).toMatchObject(eventHandler2);
+        expect(eventDispatcher.eventHandlers.CustomerCreatedEvent.length).toBe(2);
+
+
+        eventDispatcher.notify(customerCreatedEvent);
+        expect(spyEventHandler1).toHaveBeenCalledTimes(1);
+        expect(spyEventHandler2).toHaveBeenCalledTimes(1);
+
+        // test if the event handler is called with the correct event
+        expect(spyEventHandler1).toHaveBeenCalledWith(customerCreatedEvent);
+        expect(spyEventHandler2).toHaveBeenCalledWith(customerCreatedEvent);
+
+    });
+
+    it('should notify when a customer address is updated', () => {
+        const eventDispatcher = new EventDispatcher();
+        const eventHandler = new SendConsoleLogWhenCustomerAddressIsUpdatedHandler();
+        const spyEventHandler = jest.spyOn(eventHandler, 'handle')
+
+        const newCustomer = new Customer('1', 'João da Silva');
+        const address = new Address('Dias da Cruz', 175, '22330-445', 'Rio de Janeiro');
+        newCustomer.changeAddress(address);
+
+        const addressUpdatedEvent = new CustomerAddressUpdatedEvent({
+            name: 'CustomerAddressUpdatedEvent',
+            data: {
+                clientId: newCustomer.id,
+                clientName: newCustomer.name,
+                clientAddress: {
+                    street: newCustomer.address.street,
+                    number: newCustomer.address.number,
+                    zipCode: newCustomer.address.zipCode,
+                    city: newCustomer.address.city
+                }
+            }
+        });
+
+        eventDispatcher.register('CustomerAddressUpdatedEvent', eventHandler);
+        expect(eventDispatcher.eventHandlers.CustomerAddressUpdatedEvent[0]).toMatchObject(eventHandler);
+
+        eventDispatcher.notify(addressUpdatedEvent);
+        expect(spyEventHandler).toHaveBeenCalledTimes(1);
+        expect(spyEventHandler).toHaveBeenCalledWith(addressUpdatedEvent);
+
+    })
+    ;
 
 });
