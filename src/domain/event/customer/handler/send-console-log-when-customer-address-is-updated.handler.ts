@@ -1,5 +1,7 @@
+import CustomerAddressUpdatedEvent from "../customer-address-updated.event";
+
 export default class SendConsoleLogWhenCustomerAddressIsUpdatedHandler {
-    handle(event: any): void {
+    handle(event: CustomerAddressUpdatedEvent): void {
 
         // tslint:disable-next-line:no-console
         const {clientId, clientName, clientAddress} = event.eventData.data;
