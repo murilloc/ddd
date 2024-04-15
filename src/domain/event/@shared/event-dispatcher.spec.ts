@@ -86,10 +86,21 @@ describe('Domain events test', () => {
         const newCustomer = new Customer('1', 'Customer 1');
         const address = new Address('Street 1', 1, '12345', 'City 1');
         newCustomer.changeAddress(address);
-        const customerCreatedEvent = new CustomerCreatedEvent({
-            name: 'CustomerCreatedEvent',
-            data: newCustomer
-        })
+        const customerCreatedEvent = new CustomerCreatedEvent(
+            {
+                name: 'CustomerCreatedEvent',
+                data: {
+                    clientId: newCustomer.id,
+                    clientName: newCustomer.name,
+                    clientAddress: {
+                        street: newCustomer.address.street,
+                        number: newCustomer.address.number,
+                        zipCode: newCustomer.address.zipCode,
+                        city: newCustomer.address.city
+                    }
+                }
+            }
+        )
 
         eventDispatcher.register('CustomerCreatedEvent', eventHandler1);
         eventDispatcher.register('CustomerCreatedEvent', eventHandler2);

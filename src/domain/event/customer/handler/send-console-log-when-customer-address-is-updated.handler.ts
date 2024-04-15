@@ -1,6 +1,7 @@
 import CustomerAddressUpdatedEvent from "../customer-address-updated.event";
+import EventHandlerInterface from "../../@shared/event-handler.interface";
 
-export default class SendConsoleLogWhenCustomerAddressIsUpdatedHandler {
+export default class SendConsoleLogWhenCustomerAddressIsUpdatedHandler implements EventHandlerInterface<CustomerAddressUpdatedEvent>{
     handle(event: CustomerAddressUpdatedEvent): void {
 
         // tslint:disable-next-line:no-console
